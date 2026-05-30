@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Lora", "Nanum Myeongjo", Georgia, Cambria, serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  /* Natural Tones Theme Colors mapping */
+  --color-natural-light: #FDFCF7;
+  --color-natural-dark: #43423E;
+  --color-natural-bone: #E8E6DF;
+  --color-natural-sage: #6B705C;
+  --color-natural-moss: #A5A58D;
+  --color-natural-coal: #353530;
+  --color-natural-beige: #F8F7F2;
+}
+
+@layer base {
+  body {
+    background-color: #FDFCF7;
+    color: #43423E;
+    font-family: var(--font-sans);
+  }
+}
+
+/* Perfect styling for custom scrollbars to maintain the heritage archive feeling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F8F7F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #E8E6DF;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6B705C;
+}
