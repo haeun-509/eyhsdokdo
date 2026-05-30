@@ -25,7 +25,14 @@ function getAiClient(): GoogleGenAI {
     if (!apiKey || apiKey === 'MY_GEMINI_API_KEY') {
       throw new Error('GEMINI_API_KEY가 설정되어 있지 않습니다.');
     }
-    aiClient = new GoogleGenAI({ apiKey });
+    aiClient = new GoogleGenAI({
+      apiKey,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
   }
   return aiClient;
 }
@@ -48,7 +55,7 @@ app.post('/api/chat', async (req, res) => {
       console.warn('Gemini API key is not configured. Falling back to local educational response model.');
       const simulatedResponse = getLocalResponse(message);
       res.json({
-        text: simulatedResponse,
+        text: `[안내: API 키가 입력되어 있지 않습니다. 교재 데이터베이스 답변을 불러옵니다.]\n\n${simulatedResponse}`,
         isFallback: true
       });
       return;
@@ -92,21 +99,30 @@ app.post('/api/chat', async (req, res) => {
       parts: [{ text: message }]
     });
 
-    const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents,
-      config: {
-        systemInstruction,
-        temperature: 0.6
-      }
-    });
+    try {
+      const response = await client.models.generateContent({
+        model: 'gemini-3.5-flash',
+        contents,
+        config: {
+          systemInstruction,
+          temperature: 0.6
+        }
+      });
 
-    res.json({
-      text: response.text,
-      isFallback: false
-    });
+      res.json({
+        text: response.text,
+        isFallback: false
+      });
+    } catch (apiError: any) {
+      console.warn('Gemini API calling failed, falling back gracefully:', apiError);
+      const simulatedResponse = getLocalResponse(message);
+      res.json({
+        text: `[원격 AI 오류 보고: ${apiError.message || apiError}]\n\n* 대안으로 탑재된 지리·사료 데이터베이스 검색 결과를 전해드립니다:\n\n${simulatedResponse}`,
+        isFallback: true
+      });
+    }
   } catch (error: any) {
-    console.error('Gemini API Error:', error);
+    console.error('Gemini API Route Error:', error);
     res.status(500).json({ error: error.message || '서버 에러가 발생했습니다.' });
   }
 });
@@ -160,29 +176,39 @@ app.post('/api/generate-reflection', async (req, res) => {
 7. 부연 설명이나 다른 텍스트 없이 오직 JSON 형식만을 정확히 출력하십시오.
     `;
 
-    const response = await client.models.generateContent({
-      model: 'gemini-3.5-flash',
-      contents: `키워드: "${keywords}", 소주제: "${topic}", 분위기: "${tone}", 작성자: "${author} (${school})"`,
-      config: {
-        systemInstruction,
-        temperature: 0.8,
-        responseMimeType: 'application/json'
-      }
-    });
-
     try {
-      const resultObj = JSON.parse(response.text?.trim() || '{}');
-      res.json({
-        title: resultObj.title || `${keywords.split(',')[0]} 탐구에 관한 주권 성찰`,
-        content: resultObj.content || '소감문을 생성하지 못했습니다. 다시 조율해 주십시오.',
-        isFallback: false
+      const response = await client.models.generateContent({
+        model: 'gemini-3.5-flash',
+        contents: `키워드: "${keywords}", 소주제: "${topic}", 분위기: "${tone}", 작성자: "${author} (${school})"`,
+        config: {
+          systemInstruction,
+          temperature: 0.8,
+          responseMimeType: 'application/json'
+        }
       });
-    } catch (parseErr) {
-      console.warn('JSON parsing failed. Raw response:', response.text);
+
+      try {
+        const resultObj = JSON.parse(response.text?.trim() || '{}');
+        res.json({
+          title: resultObj.title || `${keywords.split(',')[0]} 탐구에 관한 주권 성찰`,
+          content: resultObj.content || '소감문을 생성하지 못했습니다. 다시 조율해 주십시오.',
+          isFallback: false
+        });
+      } catch (parseErr) {
+        console.warn('JSON parsing failed. Raw response:', response.text);
+        res.json({
+          title: `${keywords.split(',')[0]} 중심의 주권 성찰`,
+          content: response.text || '소감문을 생성하지 못했습니다. 다시 조율해 주십시오.',
+          isFallback: false
+        });
+      }
+    } catch (apiError: any) {
+      console.error('Reflection Gemini API Error:', apiError);
+      const simulatedReflection = getLocalSimulatedReflection(keywords, topic, tone, author);
       res.json({
-        title: `${keywords.split(',')[0]} 중심의 주권 성찰`,
-        content: response.text || '소감문을 생성하지 못했습니다. 다시 조율해 주십시오.',
-        isFallback: false
+        title: `"${keywords.split(',')[0]}" 중심의 주권 성찰과 교훈 (로컬 버전)`,
+        content: `[원격 AI 오류 보고: ${apiError.message || apiError}]\n\n* 대안으로 탑재된 로컬 고안 성찰문을 작성해 드립니다:\n\n${simulatedReflection}`,
+        isFallback: true
       });
     }
 
