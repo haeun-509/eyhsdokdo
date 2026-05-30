@@ -1,9 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-serif: "Lora", "Nanum Myeongjo", Georgia, Cambria, serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-sans: "Inter", "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Noto Serif KR", "Nanum Myeongjo", Georgia, Cambria, serif;
+  --font-mono: "JetBrains Mono", SFMono-Regular, monospace;
   
   /* Natural Tones Theme Colors mapping */
   --color-natural-light: #FDFCF7;
@@ -18,8 +19,11 @@
 @layer base {
   body {
     background-color: #FDFCF7;
-    color: #43423E;
+    color: #353530;
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 }
 

@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Compass, BookOpen, Clock, Edit3, MessageCircle, HelpCircle } from 'lucide-react';
+import { Compass, BookOpen, Clock, Edit3, MessageCircle, HelpCircle, FileText } from 'lucide-react';
 
 interface NavigationProps {
   activeTab: string;
@@ -19,6 +19,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
     { id: 'workbook', label: 'Chapter 04. 평화 활동지', icon: Edit3 },
     { id: 'chat', label: 'AI 학술 도우미', icon: MessageCircle },
     { id: 'quiz', label: '주권 인증 테스트', icon: HelpCircle },
+    { id: 'reflection', label: '주권 소감문', icon: FileText },
   ];
 
   return (
@@ -28,12 +29,12 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
           독
         </div>
         <div className="flex flex-col">
-          <span className="font-serif font-bold text-base lg:text-lg tracking-tight text-[#353530]">독도 주권 교육 종합 아카이브</span>
-          <span className="text-[9px] text-[#A5A58D] uppercase tracking-[0.2em] font-mono">Territorial Sovereignty Education</span>
+          <span className="font-serif font-bold text-lg lg:text-xl tracking-tight text-[#353530]">독도 주권 교육 종합 아카이브</span>
+          <span className="text-xs text-[#6B705C] font-semibold uppercase tracking-[0.1em] font-mono mt-0.5">Territorial Sovereignty Education</span>
         </div>
       </div>
       
-      <div className="flex flex-wrap justify-center gap-2 lg:gap-4">
+      <div className="flex flex-wrap justify-center gap-2 lg:gap-3.5">
         {navItems.map((item) => {
           const IconComp = item.icon;
           const isActive = activeTab === item.id;
@@ -41,13 +42,13 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 text-[11px] uppercase tracking-wider font-semibold rounded-full border transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-xs lg:text-sm uppercase tracking-wide font-bold rounded-full border transition-all ${
                 isActive
-                  ? 'bg-[#6B705C] text-white border-[#6B705C]'
-                  : 'text-[#5C5B56] border-[#E8E6DF] hover:bg-[#F8F7F2] hover:border-[#A5A58D]'
+                  ? 'bg-[#6B705C] text-white border-[#6B705C] shadow-sm'
+                  : 'text-[#43423E] border-[#E8E6DF] hover:bg-[#F8F7F2] hover:border-[#A5A58D] font-medium'
               }`}
             >
-              <IconComp size={12} />
+              <IconComp size={14} className="shrink-0" />
               <span>{item.label}</span>
             </button>
           );

@@ -12,6 +12,7 @@ import ModernTimeline from './components/ModernTimeline';
 import ClassWorkbook from './components/ClassWorkbook';
 import InteractiveDocChat from './components/InteractiveDocChat';
 import KnowledgeQuiz from './components/KnowledgeQuiz';
+import SovereigntyReflection from './components/SovereigntyReflection';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('geo');
@@ -30,6 +31,8 @@ export default function App() {
         return <InteractiveDocChat />;
       case 'quiz':
         return <KnowledgeQuiz />;
+      case 'reflection':
+        return <SovereigntyReflection />;
       default:
         return <GeographyLesson />;
     }

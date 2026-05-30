@@ -106,36 +106,36 @@ export default function InteractiveDocChat() {
     <div className="flex flex-col h-[580px] border border-[#E8E6DF] rounded-[32px] bg-white overflow-hidden shadow-sm" id="interactive-chat-widget">
       {/* Header bar */}
       <div className="bg-[#F8F7F2] border-b border-[#E8E6DF] px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-[#6B705C] flex items-center justify-center text-white">
-            <Sparkles size={16} />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#6B705C] flex items-center justify-center text-white shrink-0">
+            <Sparkles size={18} />
           </div>
           <div>
-            <h4 className="font-serif italic text-sm font-semibold text-[#353530]">AI 학술 수호 교육 어시스턴트</h4>
-            <p className="text-[10px] text-[#A5A58D] font-mono tracking-wider">GEOGRAPHY & HISTORY AI SCHOLAR</p>
+            <h4 className="font-serif italic text-base font-bold text-[#353530]">AI 학술 수호 교육 어시스턴트</h4>
+            <p className="text-xs text-[#6B705C] font-mono tracking-wider font-extrabold">GEOGRAPHY & HISTORY AI SCHOLAR</p>
           </div>
         </div>
         <button 
           onClick={handleResetChat}
-          className="p-2 text-[#A5A58D] hover:text-[#6B705C] transition-colors rounded-full hover:bg-white border border-transparent hover:border-[#E8E6DF]"
+          className="p-2.5 text-[#6B705C] hover:text-[#5A5E4E] transition-colors rounded-full hover:bg-white border border-[#E8E6DF] shadow-xs cursor-pointer"
           title="대화 초기화"
         >
-          <RefreshCw size={14} />
+          <RefreshCw size={15} />
         </button>
       </div>
 
       {/* Preset prompt helper badges */}
-      <div className="px-5 pt-3.5 pb-2 border-b border-[#F2EFE9] bg-[#FDFCF7]">
-        <p className="text-[10px] font-bold text-[#A5A58D] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-          <HelpCircle size={12} /> 빠른 사료 팩트 검증 질문 선택
+      <div className="px-5 py-3.5 border-b border-[#F2EFE9] bg-[#FDFCF7]">
+        <p className="text-xs font-extrabold text-[#6B705C] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <HelpCircle size={14} /> 빠른 사료 팩트 검증 질문 선택
         </p>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {PRESET_QUESTIONS.map((pq, idx) => (
             <button
               key={idx}
               onClick={() => handleSendMessage(pq.q)}
               disabled={isLoading}
-              className="text-xs px-3 py-1.5 rounded-full border border-[#E8E6DF] bg-white text-[#5C5B56] hover:bg-[#F8F7F2] hover:border-[#6B705C] hover:text-[#353530] transition-all text-left truncate max-w-[280px] disabled:opacity-50"
+              className="text-sm px-4 py-2 rounded-full border border-[#E8E6DF] bg-white text-[#43423E] hover:bg-[#F8F7F2] hover:border-[#6B705C] hover:text-[#353530] transition-all text-left font-bold cursor-pointer disabled:opacity-50"
             >
               {pq.short}
             </button>
@@ -158,24 +158,24 @@ export default function InteractiveDocChat() {
               className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`max-w-[85%] flex gap-2.5 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs ${
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
                   m.role === 'user' ? 'bg-[#A5A58D] text-white' : 'bg-[#6B705C] text-white font-serif italic'
                 }`}>
-                  {m.role === 'user' ? <User size={13} /> : 'B'}
+                  {m.role === 'user' ? <User size={14} /> : 'B'}
                 </div>
                 
                 <div className="flex flex-col">
-                  <div className={`px-4 py-3 rounded-2xl text-[13px] leading-relaxed shadow-sm font-sans ${
+                  <div className={`px-4.5 py-3 rounded-2xl text-sm leading-relaxed shadow-sm font-sans ${
                     m.role === 'user'
-                      ? 'bg-[#6B705C] text-white rounded-tr-none'
-                      : 'bg-white text-[#43423E] border border-[#E8E6DF] rounded-tl-none'
+                      ? 'bg-[#6B705C] text-white rounded-tr-none font-medium'
+                      : 'bg-white text-[#30302E] border border-[#E8E6DF] rounded-tl-none font-normal'
                   }`}>
                     <p className="whitespace-pre-line">{m.text}</p>
                   </div>
                   
                   {m.isFallback && m.role === 'assistant' && (
-                    <span className="text-[9px] text-[#A5A58D] mt-1.5 flex items-center gap-1 font-mono">
-                      <ShieldAlert size={10} className="text-amber-600" /> 로컬 오프라인 사료 검색 모델 가동 중
+                    <span className="text-xs text-[#6B705C] mt-1.5 flex items-center gap-1 font-mono font-bold">
+                      <ShieldAlert size={12} className="text-amber-600" /> 로컬 오프라인 사료 검색 모델 가동 중
                     </span>
                   )}
                 </div>
@@ -190,13 +190,13 @@ export default function InteractiveDocChat() {
               className="flex justify-start"
             >
               <div className="flex gap-2.5 items-center pl-1">
-                <div className="w-7 h-7 rounded-full bg-[#6B705C] text-white font-serif italic flex items-center justify-center text-xs animate-pulse">
+                <div className="w-8 h-8 rounded-full bg-[#6B705C] text-white font-serif italic flex items-center justify-center text-xs animate-pulse">
                   B
                 </div>
-                <div className="bg-white border border-[#E8E6DF] px-4 py-3 rounded-2xl rounded-tl-none shadow-sm flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#A5A58D] animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#A5A58D] animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#A5A58D] animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                <div className="bg-white border border-[#E8E6DF] px-4.5 py-3 rounded-2xl rounded-tl-none shadow-sm flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#6B705C] animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                  <span className="w-2 h-2 rounded-full bg-[#6B705C] animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                  <span className="w-2 h-2 rounded-full bg-[#6B705C] animate-bounce" style={{ animationDelay: '300ms' }}></span>
                 </div>
               </div>
             </motion.div>
@@ -207,7 +207,7 @@ export default function InteractiveDocChat() {
       {/* Input bar */}
       <form 
         onSubmit={(e) => { e.preventDefault(); handleSendMessage(inputValue); }}
-        className="p-3 bg-white border-t border-[#E8E6DF] flex gap-2 items-center"
+        className="p-3 bg-white border-t border-[#E8E6DF] flex gap-2.5 items-center"
       >
         <input
           type="text"
@@ -215,14 +215,14 @@ export default function InteractiveDocChat() {
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="독도 지리적 최단거리, 대한제국 칙령 41호 등에 대해 입력해보세요..."
           disabled={isLoading}
-          className="flex-1 px-4 py-2.5 rounded-full text-xs text-[#43423E] border border-[#E8E6DF] focus:outline-none focus:border-[#6B705C] bg-[#FDFCF7] placeholder-[#A5A58D]"
+          className="flex-1 px-5 py-3 rounded-full text-sm text-[#353530] border border-[#E8E6DF] focus:outline-none focus:border-[#6B705C] bg-[#FDFCF7] placeholder:text-stone-400 font-semibold"
         />
         <button
           type="submit"
           disabled={!inputValue.trim() || isLoading}
-          className="w-10 h-10 rounded-full bg-[#6B705C] hover:bg-[#5A5E4E] text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+          className="w-11 h-11 rounded-full bg-[#6B705C] hover:bg-[#5A5E4E] text-white flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0 cursor-pointer shadow-sm"
         >
-          <Send size={14} />
+          <Send size={15} />
         </button>
       </form>
     </div>

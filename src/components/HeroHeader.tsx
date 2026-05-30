@@ -48,6 +48,12 @@ export default function HeroHeader({ activeTab }: HeroHeaderProps) {
           title: '독도 영토 주권 박사 인증 시험',
           desc: '교육 과정을 총수강한 결과를 검정하는 다단계 퀴즈 프로그램입니다. 통과 시 독도 아카이브 공인 명예 수호 인장을 수여받습니다.'
         };
+      case 'reflection':
+        return {
+          ch: 'Chapter 05 / 배움의 기록',
+          title: '독도 주권 배움 소감문 저술관',
+          desc: '축척된 사실의 검증과 이성적인 사료 고찰의 여정을 지나, 학생 및 명예 수호 원사들이 직접 깨닫고 성찰한 바를 정갈한 문맥의 소감문으로 등재하고 선언하는 전당입니다.'
+        };
       default:
         return {
           ch: '독도 주권 교육',
@@ -64,21 +70,21 @@ export default function HeroHeader({ activeTab }: HeroHeaderProps) {
       <div className="flex-1 max-w-3xl">
         <div className="flex items-center gap-2 mb-3">
           <div className="h-px w-10 bg-[#6B705C]"></div>
-          <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-[#A5A58D] font-mono">{header.ch}</span>
+          <span className="text-xs uppercase tracking-[0.15em] font-extrabold text-[#6B705C] font-mono">{header.ch}</span>
         </div>
-        <h1 className="font-serif text-3xl lg:text-5xl leading-[1.12] mb-4 text-[#353530] font-bold">
+        <h1 className="font-serif text-4xl lg:text-5xl leading-[1.12] mb-4 text-[#353530] font-bold">
           {header.title.split(' ')[0]} <span className="italic text-[#6B705C] font-normal">{header.title.substring(header.title.indexOf(' ') + 1)}</span>
         </h1>
-        <p className="text-[13px] md:text-sm max-w-2xl leading-relaxed text-[#5C5B56] font-light">
+        <p className="text-sm md:text-base max-w-2xl leading-relaxed text-[#353530] font-normal">
           {header.desc}
         </p>
       </div>
       
       {/* Decorative Stamp Card */}
       <div className="hidden md:flex flex-col items-end border-l border-[#E8E6DF] pl-6 text-right select-none shrink-0">
-        <span className="text-[10px] uppercase tracking-widest text-[#A5A58D] font-mono">EST. 2026 / 아카이브 관인</span>
-        <span className="font-serif italic text-xs text-[#6B705C] mt-1">대한민국 국토해양 교육본부 수권</span>
-        <span className="text-[9px] text-[#A5A58D] font-mono mt-0.5">TERRITORIAL RIGHTS VERIFIED</span>
+        <span className="text-xs uppercase tracking-widest text-[#6B705C] font-mono font-bold">EST. 2026 / 아카이브 관인</span>
+        <span className="font-serif italic text-sm text-[#6B705C] mt-1 font-semibold">대한민국 역사·지리 평화교육위원회</span>
+        <span className="text-[11px] text-[#A5A58D] font-mono font-bold mt-0.5 tracking-wide">TERRITORIAL RIGHTS VERIFIED</span>
       </div>
     </header>
   );

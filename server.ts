@@ -111,6 +111,105 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
+// AI Reflection Generator API Endpoint
+app.post('/api/generate-reflection', async (req, res) => {
+  try {
+    const { keywords, topic, tone, author, school } = req.body;
+
+    if (!keywords || !keywords.trim()) {
+      res.status(400).json({ error: '키워드를 입력해주십시오.' });
+      return;
+    }
+
+    let client: GoogleGenAI;
+    try {
+      client = getAiClient();
+    } catch (keyError: any) {
+      console.warn('Gemini API key is not configured. Falling back to local educational helper to write reflection.');
+      const simulatedReflection = getLocalSimulatedReflection(keywords, topic, tone, author);
+      res.json({
+        title: `"${keywords.split(',')[0]}" 중심의 주권 성찰과 교훈`,
+        content: simulatedReflection,
+        isFallback: true
+      });
+      return;
+    }
+
+    const toneDescription = {
+      scholarly: '학술적 이성 톤 (문헌 증거, 관찬 사료, 차가운 팩트와 정량적 분석 중심)',
+      peace: '평화와 조화 톤 (한일 미래 세대 간 갈등 극복, 동해 평화, 화합과 연대)',
+      patriotic: '영토 수호 의지 톤 (조국 영공·영해·영권 수호, 의용수비대의 헌신, 수호 자부심)',
+      future: '미래 지향적 상생 톤 (과거사 정합을 바탕으로 한 건설적이고 함께 도약하는 상생 지지)'
+    }[tone] || '학술적 이성 톤';
+
+    const systemInstruction = `
+당신은 '대한민국 역사·지리 평화교육위원회'의 수석 교육 자문관이자 수석 문장가입니다.
+사용자가 제공한 핵심 키워드(Keywords)들을 융합하여, 감정 편향을 배제하고 사실에 기초한 깊이 있고 유려한 "독도 영토 주권 교육 소감문"을 작성해 주십시오.
+
+요구사항:
+1. 문맥의 분위기는 다음 지정된 톤을 철저하게 따르십시오: [${toneDescription}].
+2. 탐구 소주제는 [${topic}] 입니다.
+3. 작성자의 이름은 [${author}], 소속 기관은 [${school}] 입니다. 이들의 배움 노력을 빛내 줄 격조 높은 어조를 적용하십시오.
+4. 사용자가 제공한 키워드: [${keywords}] 들을 문장 속에 매우 자연스럽고 유기적으로 포함해 문장을 구성하세요.
+5. 단순한 감상에 그치지 않고, 지리적 사실(울릉도-독도 가시성)이나 공인 사료(태정관 지령, 대한제국 칙령 41호 등) 중 관련된 역사적 지식을 연계하여 깊이 있는 성찰을 보여주는 200~300자 내외의 한국어 단락으로 반환해야 합니다.
+6. 응답형식은 반드시 다음 속성을 지닌 JSON 객체여야 합니다:
+{
+  "title": "여기에 소감문에 걸맞은 학술적이거나 시적인 국문 제목을 적으세요",
+  "content": "여기에 생성된 소감문 본문 내용을 줄바꿈을 포함해 작성하세요.(200-300자 내외)"
+}
+7. 부연 설명이나 다른 텍스트 없이 오직 JSON 형식만을 정확히 출력하십시오.
+    `;
+
+    const response = await client.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: `키워드: "${keywords}", 소주제: "${topic}", 분위기: "${tone}", 작성자: "${author} (${school})"`,
+      config: {
+        systemInstruction,
+        temperature: 0.8,
+        responseMimeType: 'application/json'
+      }
+    });
+
+    try {
+      const resultObj = JSON.parse(response.text?.trim() || '{}');
+      res.json({
+        title: resultObj.title || `${keywords.split(',')[0]} 탐구에 관한 주권 성찰`,
+        content: resultObj.content || '소감문을 생성하지 못했습니다. 다시 조율해 주십시오.',
+        isFallback: false
+      });
+    } catch (parseErr) {
+      console.warn('JSON parsing failed. Raw response:', response.text);
+      res.json({
+        title: `${keywords.split(',')[0]} 중심의 주권 성찰`,
+        content: response.text || '소감문을 생성하지 못했습니다. 다시 조율해 주십시오.',
+        isFallback: false
+      });
+    }
+
+  } catch (error: any) {
+    console.error('Reflection Generation Error:', error);
+    res.status(500).json({ error: error.message || '소감문 생성 중 서버 에러가 발생했습니다.' });
+  }
+});
+
+// Local simulated reflection generator when API Key is missing/offline
+function getLocalSimulatedReflection(keywords: string, topic: string, tone: string, author: string): string {
+  const kwList = keywords.split(',').map(k => k.trim());
+  const kwSentence = kwList.length > 0 ? `특히 내가 탐구하고자 기조를 세웠던 주요 개념어인 [${kwList.join(', ')}]를 관조하면서 한층 성숙한 시각을 가질 수 있었습니다.` : '';
+  
+  let baseContent = '';
+  if (tone === 'scholarly') {
+    baseContent = `이번 교육을 통해 사료 학습 및 문헌적 사실들이 영토 주권을 지탱하는 주춧돌임을 절감하였습니다. 역설을 담은 선전보다는 확실히 공인되고 대조된 고문서 기록이 가장 정합적인 진실을 보여준다는 것을 느꼈고, 특히 [${topic}]의 고찰 범위가 넓음을 깨달았습니다. ${kwSentence} 앞으로 단순한 감성에 의지한 외침이 아니라 신뢰도 높은 이성으로 주권을 증명하는 자랑스러운 지성인이 되겠습니다.`;
+  } else if (tone === 'peace') {
+    baseContent = `갈등 관계에 있는 역사의 한 페이지를 볼 때 대립보다는 미래 평양성에 기댄 학술적 화합의 가치를 우선 보살피게 되었습니다. [${topic}]이라는 주제는 동해바다의 평온한 영해선처럼 양국이 한 점 부끄럼 없이 실증된 사료에 의해 진실로 동반 성장의 내일을 여는 시작점이라고 생각합니다. ${kwSentence} ${author || '성찰자'}로서 상호 존중의 약속을 마음에 새기고 한일 간 지적 대화의 다리가 되길 고대합니다.`;
+  } else if (tone === 'patriotic') {
+    baseContent = `조국의 한 뼘 영산인 독도의 국토 수호 의지와 그 속에 깃든 독립 정신의 소중함을 마음에 굵직하게 새겼습니다. 대한제국 칙령 제41호 등으로 확고히 정무 사법화한 주권을 지켜온 선열분들과 독도의용수비대의 뜨거운 헌신을 되짚는 가운데 큰 울림을 받았고, [${topic}] 역시 우리 주권사의 불멸의 대지임을 배웠습니다. ${kwSentence} 앞으로도 영토 수호의 자긍심을 품고 이 땅의 보루가 되겠습니다.`;
+  } else {
+    baseContent = `다가오는 차세대 오케이션 아래 한일 청소년들의 건설적인 동반성장과 상생이야말로 가치 탐구의 정점이 될 것입니다. 갈등을 부추기는 요인들을 명학한 진실을 토대로 함께 해소하고, [${topic}]의 유산에서 영감을 얻어 내일의 진일보한 지구촌 평화 가치를 함께 구현하겠습니다. ${kwSentence}`;
+  }
+  return baseContent;
+}
+
 // Robust Local Fallback Educational DB response if Gemini API key lacks
 function getLocalResponse(msg: string): string {
   const norm = msg.toLowerCase();

@@ -87,14 +87,14 @@ export default function KnowledgeQuiz() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            className="border border-[#E8E6DF] rounded-[40px] p-8 bg-white/70 shadow-sm relative overflow-hidden"
+            className="border border-[#E8E6DF] rounded-[40px] p-8 md:p-10 bg-white/70 shadow-sm relative overflow-hidden"
           >
             {/* Header / Progress bar */}
             <div className="flex justify-between items-center mb-6">
-              <span className="text-[10px] font-mono tracking-widest font-bold text-[#A5A58D] uppercase">
+              <span className="text-xs font-mono tracking-wider font-extrabold text-[#6B705C] uppercase">
                 주권 지식 검증 / Question {currentIdx + 1} of {quizQuestions.length}
               </span>
-              <div className="w-24 h-1 bg-[#F2EFE9] rounded-full overflow-hidden">
+              <div className="w-28 h-1.5 bg-[#F2EFE9] rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-[#6B705C] transition-all duration-300" 
                   style={{ width: `${((currentIdx + 1) / quizQuestions.length) * 100}%` }}
@@ -103,27 +103,27 @@ export default function KnowledgeQuiz() {
             </div>
 
             {/* Question title text */}
-            <h3 className="font-serif text-xl text-[#353530] font-bold leading-relaxed mb-6">
+            <h3 className="font-serif text-xl sm:text-2xl text-[#353530] font-bold leading-snug mb-6">
               {activeQuestion.question}
             </h3>
 
             {/* Options list */}
             <div className="space-y-3.5 mb-6">
               {activeQuestion.options.map((opt, idx) => {
-                let btnStyle = 'border-[#E8E6DF] bg-white text-[#43423E] hover:bg-[#F8F7F2]';
+                let btnStyle = 'border-[#E8E6DF] bg-white text-[#353530] hover:bg-[#F8F7F2] font-semibold';
                 
                 if (selectedOpt === idx) {
-                  btnStyle = 'border-[#6B705C] bg-[#6B705C]/5 text-[#353530] font-medium';
+                  btnStyle = 'border-[#6B705C] bg-[#6B705C]/5 text-[#353530] font-extrabold ring-1 ring-[#6B705C]';
                 }
 
                 // Color choices upon submission
                 if (isSubmitted) {
                   if (idx === activeQuestion.correctAnswerIndex) {
-                    btnStyle = 'border-emerald-500 bg-emerald-50 text-emerald-950 font-bold';
+                    btnStyle = 'border-emerald-500 bg-emerald-50 text-emerald-950 font-extrabold ring-1 ring-emerald-500';
                   } else if (selectedOpt === idx) {
-                    btnStyle = 'border-rose-500 bg-rose-50 text-rose-950';
+                    btnStyle = 'border-rose-500 bg-rose-50 text-rose-950 font-bold ring-1 ring-rose-500';
                   } else {
-                    btnStyle = 'border-[#E8E6DF] bg-white text-[#A5A58D] opacity-40';
+                    btnStyle = 'border-[#E8E6DF] bg-white text-[#A5A58D] opacity-40 font-normal';
                   }
                 }
 
@@ -132,12 +132,12 @@ export default function KnowledgeQuiz() {
                     key={idx}
                     disabled={isSubmitted}
                     onClick={() => handleSelectOption(idx)}
-                    className={`w-full p-4 rounded-2xl border text-xs text-left transition-all flex items-center justify-between group disabled:cursor-default ${btnStyle}`}
+                    className={`w-full p-4.5 rounded-2xl border text-sm text-left transition-all flex items-center justify-between group disabled:cursor-default cursor-pointer ${btnStyle}`}
                   >
                     <span className="leading-relaxed flex-1 pr-4">{opt}</span>
                     <div className="shrink-0 flex items-center">
-                      {isSubmitted && idx === activeQuestion.correctAnswerIndex && <CheckCircle2 size={16} className="text-emerald-700 font-bold" />}
-                      {isSubmitted && selectedOpt === idx && selectedOpt !== activeQuestion.correctAnswerIndex && <XCircle size={16} className="text-rose-700" />}
+                      {isSubmitted && idx === activeQuestion.correctAnswerIndex && <CheckCircle2 size={18} className="text-emerald-700 font-bold" />}
+                      {isSubmitted && selectedOpt === idx && selectedOpt !== activeQuestion.correctAnswerIndex && <XCircle size={18} className="text-rose-700 font-bold" />}
                     </div>
                   </button>
                 );
@@ -149,12 +149,12 @@ export default function KnowledgeQuiz() {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="bg-[#F8F7F2] border border-[#E8E6DF] rounded-2xl p-4 mb-6 text-left"
+                className="bg-[#F8F7F2] border border-[#E8E6DF] rounded-2xl p-5 mb-6 text-left shadow-sm"
               >
-                <span className="text-[9px] uppercase font-mono font-bold text-[#6B705C] tracking-wide block mb-1 flex items-center gap-1">
-                  <Info size={11} /> 학과적 사료 해설 해독
+                <span className="text-xs uppercase font-mono tracking-wider font-extrabold text-[#6B705C] block mb-1.5 flex items-center gap-1.5">
+                  <Info size={13} className="shrink-0" /> 학과적 사료 해설 해독
                 </span>
-                <p className="text-xs leading-relaxed text-[#5C5B56]">
+                <p className="text-sm leading-relaxed text-[#353530] font-medium">
                   {activeQuestion.explanation}
                 </p>
               </motion.div>
@@ -166,18 +166,18 @@ export default function KnowledgeQuiz() {
                 <button
                   onClick={handleSubmitAnswer}
                   disabled={selectedOpt === null}
-                  className="px-6 py-2.5 bg-[#43423E] hover:bg-[#353530] text-white text-xs font-bold rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+                  className="px-7 py-3 bg-[#353530] hover:bg-[#1E1E1C] text-white text-xs lg:text-sm font-extrabold rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer shadow-sm"
                 >
                   <span>정답 제출하기</span>
-                  <ArrowRight size={13} />
+                  <ArrowRight size={14} className="shrink-0" />
                 </button>
               ) : (
                 <button
                   onClick={handleNextQuestion}
-                  className="px-6 py-2.5 bg-[#6B705C] hover:bg-[#5A5E4E] text-white text-xs font-bold rounded-full transition-colors flex items-center gap-1.5"
+                  className="px-7 py-3 bg-[#6B705C] hover:bg-[#5A5E4E] text-white text-xs lg:text-sm font-extrabold rounded-full transition-all flex items-center gap-2 cursor-pointer shadow-sm"
                 >
                   <span>{currentIdx + 1 === quizQuestions.length ? '종합 성적표 보기' : '다음 문항 보기'}</span>
-                  <ArrowRight size={13} />
+                  <ArrowRight size={14} className="shrink-0" />
                 </button>
               )}
             </div>
@@ -194,34 +194,34 @@ export default function KnowledgeQuiz() {
             <div className="absolute inset-4 border border-[#E8E6DF] rounded-[28px] pointer-events-none"></div>
 
             {/* Rosette emblem of honors */}
-            <div className="w-16 h-16 rounded-full bg-amber-50 border-2 border-amber-400 flex items-center justify-center mb-6 relative">
-              <Star size={32} className="text-amber-500 fill-amber-300 animate-spin" style={{ animationDuration: '10s' }} />
-              <span className="absolute bottom-[-6px] left-[50%] translate-x-[-50%] bg-[#A5A58D] text-white text-[8px] font-sans font-bold px-1.5 py-0.5 rounded-full uppercase">SCORE</span>
+            <div className="w-18 h-18 rounded-full bg-amber-50 border-2 border-amber-400 flex items-center justify-center mb-6 relative">
+              <Star size={34} className="text-amber-500 fill-amber-300 animate-spin" style={{ animationDuration: '12s' }} />
+              <span className="absolute bottom-[-6px] left-[50%] translate-x-[-50%] bg-[#6B705C] text-white text-[9px] font-sans font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">SCORE</span>
             </div>
 
-            <span className="text-[10px] uppercase font-mono tracking-widest text-[#A5A58D] font-bold block">Course Completion Certificate</span>
-            <h2 className="text-xl md:text-2xl font-serif text-[#353530] font-bold mt-2 mb-1">독도 주권 지식 수강 성적 결과</h2>
-            <p className="text-3xl font-mono text-[#6B705C] font-black tracking-wide my-3">{score} / {quizQuestions.length} 문항 정답</p>
+            <span className="text-xs uppercase font-mono tracking-wider text-[#6B705C] font-extrabold block">Course Completion Certificate</span>
+            <h2 className="text-2xl md:text-3xl font-serif text-[#353530] font-bold mt-2.5 mb-1">독도 주권 지식 수강 성적 결과</h2>
+            <p className="text-4xl font-mono text-[#6B705C] font-black tracking-wide my-4">{score} / {quizQuestions.length} 문항 정답</p>
 
             {/* Honor Medal Frame */}
-            <div className="my-6 border border-[#E8E6DF] bg-white rounded-3xl p-6 max-w-md w-full relative">
-              <span className="text-[9px] uppercase font-mono text-[#A5A58D] font-bold block mb-1">인증 칭호 수여</span>
-              <h4 className="font-bold text-[#353530] text-lg mb-0.5">{titleMeta.title}</h4>
-              <p className="text-[10px] text-[#A5A58D] font-mono tracking-widest font-bold uppercase mb-3">{titleMeta.abbr}</p>
-              <p className="text-xs text-[#5C5B56] leading-relaxed font-sans font-light px-2">
+            <div className="my-6 border border-[#E8E6DF] bg-white rounded-3xl p-6.5 max-w-md w-full relative shadow-sm">
+              <span className="text-xs uppercase font-mono text-[#6B705C] font-extrabold block mb-1">인증 칭호 수여</span>
+              <h4 className="font-bold text-[#353530] text-xl mb-0.5">{titleMeta.title}</h4>
+              <p className="text-xs text-[#6B705C] font-mono tracking-wide font-extrabold uppercase mb-3">{titleMeta.abbr}</p>
+              <p className="text-sm text-[#353530] leading-relaxed font-sans font-medium px-1">
                 {titleMeta.desc}
               </p>
             </div>
 
-            <p className="text-[11px] text-[#A5A58D] max-w-sm leading-relaxed mb-6 font-sans font-medium">
+            <p className="text-xs text-stone-600 max-w-sm leading-relaxed mb-6 font-sans font-semibold">
               이로써 본인은 대한민국 역사·지리 평화교육위원회에 의해, 역사적 진실과 실증 사료에 기초해 우리 부속 도서 독도를 끝까지 지키는 명예 주권 서언에 보조를 마쳤음을 인증합니다.
             </p>
 
             <button
               onClick={handleRetakeQuiz}
-              className="py-3 px-8 text-xs font-bold bg-[#6B705C] hover:bg-[#5A5E4E] text-white rounded-full transition-colors flex items-center gap-1.5 font-sans"
+              className="py-3.5 px-8 text-xs lg:text-sm font-extrabold bg-[#6B705C] hover:bg-[#5A5E4E] text-white rounded-full transition-all flex items-center gap-2 font-sans cursor-pointer shadow-sm"
             >
-              <RefreshCw size={13} />
+              <RefreshCw size={14} className="shrink-0" />
               테스트 다시 세팅하기
             </button>
           </motion.div>
